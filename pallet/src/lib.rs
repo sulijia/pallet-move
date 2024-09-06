@@ -214,6 +214,7 @@ pub mod pallet {
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         fn on_idle(block_height: BlockNumberFor<T>, mut remaining_weight: Weight) -> Weight {
+            let orginal_weidht = remaining_weight;
             // This method will at least read and write once each anyway.
             remaining_weight -= T::DbWeight::get().reads_writes(1, 1);
             // Check block index, how far did we already clean up?
@@ -232,7 +233,7 @@ pub mod pallet {
             }
             ChoreOnIdleIndex::<T>::put(block);
 
-            remaining_weight
+            orginal_weidht - remaining_weight
         }
     }
 
